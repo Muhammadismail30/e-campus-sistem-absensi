@@ -17,4 +17,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/home', function () {
+    return view('home', ['title' => 'Dashboard']);
+})->middleware(['auth', 'verified'])->name('home');
+
+Route::get('/matakuliah', function () {
+    return view('matakuliah', ['title' => 'Mata Kuliah']);
+})->middleware(['auth', 'verified'])->name('matakuliah');
+
+Route::get('/jadwal', function () {
+    return view('jadwal', ['title' => 'Jadwal']);
+})->middleware(['auth', 'verified'])->name('jadwal');
+
+Route::get('/presensi', function () {
+    return view('presensi', ['title' => 'Presensi']);
+})->middleware(['auth', 'verified'])->name('presensi');
 require __DIR__.'/auth.php';
