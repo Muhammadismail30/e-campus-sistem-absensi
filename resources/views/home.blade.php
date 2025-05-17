@@ -1,4 +1,4 @@
-<x-layout>
+{{-- <x-layout>
     <x-slot:title>{{$title}}</x-slot>
 
     <div class="mb-4">
@@ -89,4 +89,4 @@
     </div>
 
 
-</x-layout>
+</x-layout> --}}

@@ -10,6 +10,9 @@ class DashboardController extends Controller
     //
     public function index()
     {
-        return view('mahasiswa.dashboard');
+        return view('mahasiswa.dashboard', [
+            'title' => 'Dashboard Mahasiswa',
+            'active' => 'dashboard',
+        ]);
     }
 }

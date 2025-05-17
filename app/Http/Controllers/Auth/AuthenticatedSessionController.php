@@ -16,6 +16,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -28,9 +32,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home', absolute: false));
+        return redirect()->intended(route('dashboard'));
     }
-
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     return redirect()->route('dashboard');
+    //     // You can add any additional logic here after successful authentication
+    //     // For example, logging the login event or redirecting to a specific page
+    // }
     /**
      * Destroy an authenticated session.
      */
@@ -42,6 +51,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }
