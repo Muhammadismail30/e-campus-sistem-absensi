@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MataKuliahController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Dosen\DashboardController as DosenDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -21,10 +22,25 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile', [ProfileController::class, 'destroy'] )->name('profile.destroy');
     
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
+    
+    Route::get('/admin/matakuliah', [MataKuliahController::class, 'index'])
+        ->name('admin.matakuliah');
+
+    Route::post('/admin/matakuliah', [MataKuliahController::class, 'store'])
+        ->name('matakuliah.store');
+    
+    Route::put('/admin/matakuliah/{matkul}', [MataKuliahController::class, 'update'])
+        ->name('matakuliah.update');
+    
+    Route::delete('/admin/matakuliah/{matkul}', [MataKuliahController::class, 'destroy'])
+        ->name('matakuliah.destroy');
+    
+
+    // Untuk fitur tambahan
 });
 
 
