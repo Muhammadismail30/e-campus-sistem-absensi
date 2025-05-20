@@ -32,7 +32,7 @@
         </div>
 
         <div class="flex justify-end mt-4 gap-2">
-            <button @click="showEdit = true" class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-1 px-3 rounded">
+            <button @click="showEdit = true" class="bg-blue-500 hover:bg-[#00B1CB] text-white text-sm font-semibold py-1 px-3 rounded">
                 ✏️ Edit
             </button>
             <button @click="showDelete = true" class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-3 rounded">
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Mode Edit -->
-    <div x-show="showEdit" x-cloak class="bg-gray-100 p-4 rounded-lg mt-4 border border-black">
+    <div x-show="showEdit" x-cloak class="bg-[#DFF5FF] p-4 rounded-lg mt-4 border border-black">
         <form method="POST" action="{{ route('matakuliah.update', $matkul->id) }}">
             @csrf
             @method('PUT')
@@ -67,17 +67,17 @@
         </form>
     </div>
 
-    <!-- Modal Hapus -->
+    <!-- Mode Hapus -->
     <div x-show="showDelete" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-black">
             <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
             <p class="my-4">Yakin ingin menghapus mata kuliah <strong>{{ $matkul->nama }}</strong>?</p>
             <div class="flex justify-end space-x-2">
-                <button @click="showDelete = false" class="bg-gray-500 text-white text-sm px-3 py-1 rounded">Batal</button>
+                <button @click="showDelete = false" class="bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">Batal</button>
                 <form method="POST" action="{{ route('matakuliah.destroy', $matkul->id) }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded">Hapus</button>
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded-lg">Hapus</button>
                 </form>
             </div>
         </div>

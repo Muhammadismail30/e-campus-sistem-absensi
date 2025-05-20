@@ -2,7 +2,7 @@
     <!-- Sidebar -->
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-blue-500 text-white p-4 hidden md:block">
         <div class="flex items-center space-x-2 mb-6">
-            <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Logo" class="w-10 h-10" />
+            <img src="{{ Vite::asset('resources/img/ith.png') }}" alt="Logo" class="w-10 h-10" />
             <h1 class="text-xl font-bold">E-CAMPUS</h1>
         </div>
         <nav class="space-y-3">
