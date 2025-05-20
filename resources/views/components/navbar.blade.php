@@ -1,9 +1,9 @@
 <div class="flex min-h-screen" x-data="{ isOpen: false }">
     <!-- Sidebar -->
-    <aside class="w-64 bg-gradient-to-b from-blue-700 to-blue-500 text-white p-4 hidden md:block">
+    <aside class="w-64 bg-gradient-to-b from-[#387ADF] to-[#1E4279] text-white p-4 hidden md:block">
         <div class="flex items-center space-x-2 mb-6">
             <img src="{{ Vite::asset('resources/img/ith.png') }}" alt="Logo" class="w-10 h-10" />
-            <h1 class="text-xl font-bold">E-CAMPUS</h1>
+            <h1 class="text-xl font-bold"><span class="text-red-600">E</span>-CAMPUS</h1>
         </div>
         <nav class="space-y-3">
             <a href="{{('dashboard') }}" class="block px-4 py-2 rounded {{ request()->is('dashboard') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Dashboard</a>
