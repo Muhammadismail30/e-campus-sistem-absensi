@@ -15,15 +15,17 @@ Route::get('/', function () {
 require __DIR__.'/auth.php';
 
 Route::middleware('auth', 'verified')->group(function () {
-    
-    Route::get('/dashboard', function () {
-        return redirect()->route('admin.dashboard');
-    }) ->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'] )->name('profile.destroy');
-    
+
+    Route::get('/mahasiswa/dashboard', [MahasiswaDashboardController::class, 'index'])
+        ->name('mahasiswa.dashboard');
+        
+    Route::get('/dosen/dashboard', [DosenDashboardController::class, 'index'])
+        ->name('dosen.dashboard');
+
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
     
@@ -38,12 +40,14 @@ Route::middleware('auth', 'verified')->group(function () {
     
     Route::delete('/admin/matakuliah/{matkul}', [MataKuliahController::class, 'destroy'])
         ->name('matakuliah.destroy');
-    
+    });
 
     // Untuk fitur tambahan
+
+Route::get('/dashboard', function() {
+    $user = Auth::user();
+    return redirect()->route($user->role . '.dashboard');
 });
-
-
 
 Route::get('/mahasiswa/dashboard', [MahasiswaDashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])

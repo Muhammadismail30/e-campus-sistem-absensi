@@ -91,7 +91,7 @@
 
 </x-layout> --}}
 
-@extends("components.layout",["title" => "Dashboard"])
+@extends("components.layout",["title" => $title ?? "Dashboard"])
 
 @section('content')
 

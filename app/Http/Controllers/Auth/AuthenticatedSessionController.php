@@ -32,7 +32,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        // TODOS: Logic for redirecting based on user role
+
+        return redirect()->intended(route($request->user()->role . '.dashboard'));
     }
     // protected function authenticated(Request $request, $user)
     // {
