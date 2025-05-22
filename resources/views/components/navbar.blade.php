@@ -79,7 +79,24 @@
 
         <!-- Main Content Area -->
 <main class="p-6">
-    <h1 class="text-2xl font-bold mb-4">@yield('title', 'Dashboard')</h1>
+    <h1 class="text-2xl font-bold mb-4">
+@php
+    $uri = request()->path();
+    if (Str::contains($uri, 'dashboard')) {
+        $pageTitle = 'Dashboard';
+    } elseif (Str::contains($uri, 'matakuliah')) {
+        $pageTitle = 'Mata Kuliah';
+    } elseif (Str::contains($uri, 'jadwal')) {
+        $pageTitle = 'Jadwal';
+    } elseif (Str::contains($uri, 'presensi')) {
+        $pageTitle = 'Presensi';
+    } else {
+        $pageTitle = 'E-Campus';
+    }
+@endphp
+
+<h1 class="text-2xl font-bold mb-4">{{ $pageTitle }}</h1>
+</h1>
     @yield('content')
 </main>
 
