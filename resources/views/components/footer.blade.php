@@ -7,7 +7,7 @@
         <img src="{{ Vite::asset('resources/img/ith.png') }}" alt="E-Campus Logo" class="w-10 h-10">
         <div>
           <h1 class="text-xl font-semibold"><span class="text-red-600">E</span>-CAMPUS</h1>
-          <p class="text-xs text-gray-500">Design by BUBAKABAKO</p>
+          <p class="text-xs text-gray-500">Design by BUBADIBAKO</p>
         </div>
       </div>
       <div>
