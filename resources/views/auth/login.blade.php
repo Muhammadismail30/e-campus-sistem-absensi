@@ -1,20 +1,20 @@
 <x-guest-layout>
-    <div class="flex min-h-screen">
+    <div class="flex h-screen w-screen overflow-hidden">
         <!-- Gambar -->
         <div class="w-1/2 hidden md:block">
             <img
-                src="{{ Vite::asset('resources/img/bg-login1.png') }}"  {{-- Ganti dengan path gambar yang benar --}}
+                src="{{ Vite::asset('resources/img/bg-login1.png') }}"
                 alt="Monumen"
                 class="w-full h-full object-cover"
             />
         </div>
 
-        <!-- Supaya Ke kanan i -->
-        <div class="w-full md:w-1/2 flex items-center justify-center bg-white px-6">
+        <!-- Form Login -->
+        <div class="w-full md:w-1/2 flex items-center justify-center bg-white px-6 h-full overflow-hidden">
             <div class="w-full max-w-md">
                 <!-- Logo ITEHA -->
                 <div class="text-center mb-8">
-                    <img src="{{ Vite::asset('resources/img/ith.png') }}" alt="Logo" class="h-16 mx-auto mb-4"> {{-- Ganti dengan path logo yang benar --}}
+                    <img src="{{ Vite::asset('resources/img/ith.png') }}" alt="Logo" class="h-16 mx-auto mb-4">
                     <h1 class="text-4xl font-extrabold"><span class="text-red-600">E</span>-CAMPUS</h1>
                     <p class="text-sm text-gray-600 mt-2">Silahkan Log In Terlebih Dahulu</p>
                 </div>
@@ -28,7 +28,7 @@
 
                     <!-- Email -->
                     <div class="mb-4">
-                        <x-input-label for="email" :value="__('Email')" />
+                        <x-input-label for="email" :value="('Email')" />
                         <x-text-input
                             id="email"
                             class="block w-full mt-1 px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -45,7 +45,7 @@
 
                     <!-- Password -->
                     <div class="mb-4">
-                        <x-input-label for="password" :value="__('Password')" />
+                        <x-input-label for="password" :value="('Password')" />
                         <x-text-input
                             id="password"
                             class="block w-full mt-1 px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
