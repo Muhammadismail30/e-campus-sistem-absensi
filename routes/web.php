@@ -9,66 +9,37 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
-    // return view('auth.login', ['title' => 'Login']);
 });
 
 require __DIR__.'/auth.php';
 
-Route::middleware('auth', 'verified')->group(function () {
+// Redirect umum setelah login
+Route::get('/dashboard', function() {
+    return redirect()->route(auth()->user()->role . '.dashboard');
+})->middleware(['auth', 'verified']);
 
+// Route untuk semua role yang terautentikasi
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'] )->name('profile.destroy');
-
-    Route::get('/mahasiswa/dashboard', [MahasiswaDashboardController::class, 'index'])
-        ->name('mahasiswa.dashboard');
-        
-    Route::get('/dosen/dashboard', [DosenDashboardController::class, 'index'])
-        ->name('dosen.dashboard');
-
-    Route::get('/admin/dashboard', [DashboardController::class, 'index'])
-        ->name('admin.dashboard');
-    
-    Route::get('/admin/matakuliah', [MataKuliahController::class, 'index'])
-        ->name('admin.matakuliah');
-
-    Route::post('/admin/matakuliah', [MataKuliahController::class, 'store'])
-        ->name('matakuliah.store');
-    
-    Route::put('/admin/matakuliah/{matkul}', [MataKuliahController::class, 'update'])
-        ->name('matakuliah.update');
-    
-    Route::delete('/admin/matakuliah/{matkul}', [MataKuliahController::class, 'destroy'])
-        ->name('matakuliah.destroy');
-    });
-
-    // Untuk fitur tambahan
-
-Route::get('/dashboard', function() {
-    $user = Auth::user();
-    return redirect()->route($user->role . '.dashboard');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/mahasiswa/dashboard', [MahasiswaDashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('mahasiswa.dashboard');
+// Route khusus admin
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/matakuliah', [MataKuliahController::class, 'index'])->name('admin.matakuliah');
+    Route::post('/matakuliah', [MataKuliahController::class, 'store'])->name('matakuliah.store');
+    Route::put('/matakuliah/{matkul}', [MataKuliahController::class, 'update'])->name('matakuliah.update');
+    Route::delete('/matakuliah/{matkul}', [MataKuliahController::class, 'destroy'])->name('matakuliah.destroy');
+});
 
-Route::get('/dosen/dashboard', [DosenDashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dosen.dashboard');
+// Route khusus dosen
+Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(function () {
+    Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dosen.dashboard');
+});
 
-// Route::get('/home', function () {
-//     return view('home', ['title' => 'Dashboard']);
-// })->middleware(['auth', 'verified'])->name('home');
-
-// Route::get('/matakuliah', function () {
-//     return view('matakuliah', ['title' => 'Mata Kuliah']);
-// })->middleware(['auth', 'verified'])->name('matakuliah');
-
-// Route::get('/jadwal', function () {
-//     return view('jadwal', ['title' => 'Jadwal']);
-// })->middleware(['auth', 'verified'])->name('jadwal');
-
-// Route::get('/presensi', function () {
-//     return view('presensi', ['title' => 'Presensi']);
-// })->middleware(['auth', 'verified'])->name('presensi');
+// Route khusus mahasiswa
+Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->group(function () {
+    Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('mahasiswa.dashboard');
+});
