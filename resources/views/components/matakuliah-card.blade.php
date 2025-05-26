@@ -1,9 +1,21 @@
-@props(['matkul', 'dosens'])
+@props([
+    'matkul',
+    'dosens' => null,
+    'role' => auth()->user()->role ?? 'guest'
+])
+
+{{-- Pastikan $matkul, $dosens, dan $mahasiswas sudah didefinisikan di controller --}}
+{{-- Contoh penggunaan: <x-matakuliah-card :matkul="$matkul" :dosens="$dosens" /> --}}
 
 {{-- Card untuk menampilkan detail mata kuliah --}}
 {{-- Menggunakan Alpine.js untuk interaksi --}}
 
-<div class="bg-[#DFF5FF] rounded-lg shadow-md border border-black p-4 relative" x-data="{ showEdit: false, showDelete: false }">
+<div class="bg-[#DFF5FF] rounded-lg shadow-md border border-black p-4 relative" x-data="{ 
+    showEdit: false, 
+    showDelete: false,
+    showMasukModal: false,
+    kodeMatkul: ''
+}">
     <!-- Mode Tampilan -->
     <div x-show="!showEdit">
         <div class="flex justify-between items-center mb-2">
@@ -46,17 +58,70 @@
             </div>
         </div>
 
+         <!-- Tombol Aksi Berdasarkan Role -->
         <div class="flex justify-end mt-4 gap-2">
-            <button @click="showEdit = true" class="bg-blue-500 hover:bg-[#00B1CB] text-white text-sm font-semibold py-1 px-3 rounded">
-                ✏️ Edit
+        @if($role === 'admin')
+            <!-- Admin - Detail -->
+            <a href="{{ route('admin.matakuliah.detail', $matkul->id) }}" 
+               class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-3 rounded">
+                🔍 Detail
+            </a>
+        @elseif($role === 'dosen')
+            <!-- Dosen - Masuk -->
+            <button @click="showMasukModal = true" 
+                    class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded">
+                🚪 Masuk
             </button>
-            <button @click="showDelete = true" class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-3 rounded">
-                🗑️ Hapus
+        @elseif($role === 'mahasiswa')
+            <!-- Mahasiswa - Masuk dengan Kode -->
+            <button @click="showMasukModal = true" 
+                    class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded">
+                🚪 Masuk (Kode)
             </button>
+        @endif
+    </div>
+
+    <!-- Modal Masuk untuk Dosen/Mahasiswa -->
+    <div x-show="showMasukModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 class="font-bold text-lg mb-4">
+                @if($role === 'dosen')
+                    Manajemen Kelas {{ $matkul->nama }}
+                @else
+                    Masuk Kelas {{ $matkul->nama }}
+                @endif
+            </h3>
+            
+            @if($role === 'mahasiswa')
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-1">Masukkan Kode Matkul</label>
+                <input x-model="kodeMatkul" type="text" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            @endif
+
+            <div class="flex justify-between items-center">
+                <button @click="showMasukModal = false" 
+                        class="bg-gray-500 text-white text-sm px-3 py-1 rounded">
+                    Batal
+                </button>
+                
+                @if($role === 'dosen')
+                    <a href="{{ route('dosen.matakuliah.manage', $matkul->id) }}" 
+                       class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                        Masuk Kelas
+                    </a>
+                @else
+                    <button @click="if(kodeMatkul === '{{ $matkul->kode }}') { window.location.href = '{{ route('mahasiswa.matakuliah.enter', $matkul->id) }}' } else { alert('Kode matkul salah!') }" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                        Konfirmasi
+                    </button>
+                @endif
+            </div>
         </div>
     </div>
 
     <!-- Mode Edit -->
+    @if($role === 'admin')
     <div x-show="showEdit" x-cloak class="bg-[#DFF5FF] p-4 rounded-lg mt-4 border border-black">
         <form method="POST" action="{{ route('matakuliah.update', $matkul->id) }}">
             @csrf
@@ -94,8 +159,10 @@
             </div>
         </form>
     </div>
+    @endif
 
     <!-- Mode Hapus -->
+    @if($role === 'admin')
     <div x-show="showDelete" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-black">
             <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
@@ -110,4 +177,5 @@
             </div>
         </div>
     </div>
+    @endif
 </div>

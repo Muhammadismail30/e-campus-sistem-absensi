@@ -54,4 +54,10 @@ class MataKuliahController extends Controller
         $matkul->delete();
         return back()->with('success', 'Mata Kuliah berhasil dihapus');
     }
+
+    public function show($id)
+    {
+        $matkul = MataKuliah::with(['dosen.user', 'kelas'])->findOrFail($id);
+        return view('admin.matakuliah-detail', compact('matkul'));
+    }
 }

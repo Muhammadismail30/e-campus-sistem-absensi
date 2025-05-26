@@ -16,10 +16,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        if (Auth::check()) {
-            return redirect()->route('dashboard');
-        }
-
+        // The redirect should not be here since this method must return a View.
+        // You can handle the redirect in middleware or in the route definition.
         return view('auth.login');
     }
 
