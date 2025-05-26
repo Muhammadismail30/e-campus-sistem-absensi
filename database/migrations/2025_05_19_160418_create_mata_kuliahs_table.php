@@ -16,7 +16,13 @@ return new class extends Migration
             $table->string('kode')->unique();
             $table->string('nama');
             $table->integer('sks');
+            $table->unsignedBigInteger('dosen_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('dosen_id')
+                ->references('id')
+                ->on('dosens')
+                ->onDelete('set null');
         });
     }
 

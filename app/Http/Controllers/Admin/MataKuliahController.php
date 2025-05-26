@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MataKuliah;
+use App\Models\Dosen;
 
 class MataKuliahController extends Controller
 {
     public function index()
     {
-        $matkuls = MataKuliah::all();
+        $matkuls = MataKuliah::with(['dosen.user'])->get();
+        $dosens = Dosen::with('user')->get();
 
         return view('admin.matakuliah', [
             'title' => 'Mata Kuliah',
             'active' => 'matakuliah',
-            'matkuls' => $matkuls
+            'matkuls' => $matkuls,
+            'dosens' => $dosens
         ]);
     }
     
@@ -25,7 +28,8 @@ class MataKuliahController extends Controller
         $request->validate([
             'kode' => 'required|unique:mata_kuliah',
             'nama' => 'required',
-            'sks' => 'required|numeric'
+            'sks' => 'required|numeric',
+            'dosen_id' => 'nullable|exists:dosens,id'
         ]);
 
         MataKuliah::create($request->all());
@@ -37,7 +41,8 @@ class MataKuliahController extends Controller
         $request->validate([
             'kode' => 'required|unique:mata_kuliah,kode,'.$matkul->id,
             'nama' => 'required',
-            'sks' => 'required|numeric'
+            'sks' => 'required|numeric',
+            'dosen_id' => 'nullable|exists:dosens,id'
         ]);
 
         $matkul->update($request->all());

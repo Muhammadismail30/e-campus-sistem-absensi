@@ -1,4 +1,7 @@
-@props(['matkul'])
+@props(['matkul', 'dosens'])
+
+{{-- Card untuk menampilkan detail mata kuliah --}}
+{{-- Menggunakan Alpine.js untuk interaksi --}}
 
 <div class="bg-[#DFF5FF] rounded-lg shadow-md border border-black p-4 relative" x-data="{ showEdit: false, showDelete: false }">
     <!-- Mode Tampilan -->
@@ -31,6 +34,18 @@
             </div>
         </div>
 
+        <!-- Tambahan: Informasi Dosen Pengampu -->
+        <div class="mt-4 border-t pt-4 border-black">
+            <div class="text-gray-500">Dosen Pengampu</div>
+            <div class="text-base font-bold flex items-center gap-2">
+                @if($matkul->dosen && $matkul->dosen->user)
+                    {{ $matkul->dosen->user->name }}
+                @else
+                    <span class="text-gray-400">Belum ada dosen</span>
+                @endif
+            </div>
+        </div>
+
         <div class="flex justify-end mt-4 gap-2">
             <button @click="showEdit = true" class="bg-blue-500 hover:bg-[#00B1CB] text-white text-sm font-semibold py-1 px-3 rounded">
                 ✏️ Edit
@@ -58,6 +73,19 @@
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-medium mb-1" for="sks">SKS</label>
                 <input name="sks" value="{{ $matkul->sks }}" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            
+            <!-- Tambahan: Dropdown Dosen Pengampu di Form Edit -->
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-1" for="dosen_id">Dosen Pengampu</label>
+                <select name="dosen_id" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300">
+                    <option value="">-- Pilih Dosen --</option>
+                    @foreach($dosens as $dosen)
+                        <option value="{{ $dosen->id }}" {{ $matkul->dosen_id == $dosen->id ? 'selected' : '' }}>
+                            {{ $dosen->user->name }} <!-- Hanya tampilkan nama -->
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="flex justify-end space-x-2">

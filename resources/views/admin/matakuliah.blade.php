@@ -14,11 +14,14 @@
     <!-- Daftar Matkul -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach($matkuls as $matkul)
-            <x-matakuliah-card :matkul="$matkul" />
+            <x-matakuliah-card 
+                :matkul="$matkul"
+                :dosens="$dosens" 
+            />
         @endforeach
     </div>
 
-    <!-- Modal Tambah -->
+<!-- Modal Tambah -->
     <dialog id="tambahMatkulModal" class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <form method="POST" action="{{ route('matakuliah.store') }}" class="space-y-4">
             @csrf
@@ -28,13 +31,26 @@
                 <label class="block text-sm font-medium text-gray-700">Nama</label>
                 <input type="text" name="nama" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
             </div>
+            
             <div>
                 <label class="block text-sm font-medium text-gray-700">Kode</label>
                 <input type="text" name="kode" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
             </div>
+            
             <div>
                 <label class="block text-sm font-medium text-gray-700">SKS</label>
                 <input type="number" name="sks" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+            </div>
+            
+            <!-- Tambahkan dropdown dosen -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Dosen Pengampu</label>
+                <select name="dosen_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    <option value="">-- Pilih Dosen --</option>
+                    @foreach($dosens as $dosen)
+                        <option value="{{ $dosen->id }}">{{ $dosen->nama }} ({{ $dosen->nidn }})</option>
+                    @endforeach
+                </select>
             </div>
             
             <div class="flex justify-end space-x-2">
