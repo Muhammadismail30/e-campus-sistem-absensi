@@ -11,19 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mata_kuliah', function (Blueprint $table) {
-            $table->id();
-            $table->string('kode')->unique();
-            $table->string('nama');
-            $table->integer('sks');
-            $table->unsignedBigInteger('dosen_id')->nullable();
-            $table->timestamps();
-
-            $table->foreign('dosen_id')
-                ->references('id')
-                ->on('dosens')
-                ->onDelete('set null');
-        });
+       Schema::create('mata_kuliah', function (Blueprint $table) {
+        $table->id();
+        $table->string('kode')->unique();
+        $table->string('nama');
+        $table->integer('sks');
+        $table->timestamps();
+        
+        // HAPUS deklarasi dosen_id di sini
+        // Pindahkan ke migrasi terpisah
+    });
     }
 
     /**
