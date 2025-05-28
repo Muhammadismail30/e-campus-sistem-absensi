@@ -15,8 +15,11 @@
                     <a href="{{ route('admin.datapengguna') }}"
                         class="block px-4 py-2 rounded {{ request()->routeIs('admin.datapengguna') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Data Pengguna</a>
                 @endif
+
+                @if (auth()->user()->role === 'dosen' || auth()->user()->role === 'mahasiswa')
                 <a href="{{ route(auth()->user()->role . '.presensi') }}"
                     class="block px-4 py-2 rounded {{ request()->routeIs(auth()->user()->role . '.presensi') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Presensi</a>
+                @endif
             @endauth
         </nav>
     </aside>
@@ -73,8 +76,10 @@
                         <a href="{{ route('admin.datapengguna') }}"
                             class="block px-4 py-2 rounded {{ request()->routeIs('admin.datapengguna') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Data Pengguna</a>
                     @endif
-                    <a href="{{ route(auth()->user()->role . '.presensi') }}"
-                        class="block px-4 py-2 rounded {{ request()->routeIs(auth()->user()->role . '.presensi') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Presensi</a>
+                   @if (auth()->user()->role === 'dosen' || auth()->user()->role === 'mahasiswa')
+                        <a href="{{ route(auth()->user()->role . '.presensi') }}"
+                            class="block px-4 py-2 rounded {{ request()->routeIs(auth()->user()->role . '.presensi') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Presensi</a>
+                    @endif
                 @endauth
             </nav>
         </div>
