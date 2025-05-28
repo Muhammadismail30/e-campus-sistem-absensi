@@ -19,6 +19,8 @@ class MataKuliah extends Model
         return $this->belongsTo(User::class);
     }
 
+    
+
     // public function absensi()
     // {
     //     return $this->hasMany(Absensi::class);
