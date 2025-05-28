@@ -12,12 +12,15 @@ class MataKuliahController extends Controller
 {
     //
     public function index()
-    {
-        return view('mahasiswa.matakuliah', [
-            'title' => 'Mata Kuliah',
-            'active' => 'mata kuliah',
-        ]);
-    }
+{
+    $matkuls = MataKuliah::all(); // ambil semua mata kuliah langsung dari tabel
+
+    return view('mahasiswa.matakuliah', [
+        'title' => 'Mata Kuliah Mahasiswa',
+        'active' => 'mata kuliah',
+        'matkuls' => $matkuls,
+    ]);
+}
 
     public function enter($id)
     {
