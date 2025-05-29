@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MataKuliah;
 use App\Models\Dosen;
+use App\Models\Presence;
 
 class MataKuliahController extends Controller
 {
@@ -55,9 +56,17 @@ class MataKuliahController extends Controller
         return back()->with('success', 'Mata Kuliah berhasil dihapus');
     }
 
-    public function show(MataKuliah $matkul)
+    // app/Http/Controllers/Admin/MataKuliahController.php
+    public function show($id)
     {
-        $matkul->load(['dosen.user']); // Load relasi secara lazy
-        return view('admin.matakuliah-detail', compact('matkul'));
+        $matkul = MataKuliah::with(['dosen', 'presences.attendances'])
+                ->withCount('mahasiswas') // tambahkan ini
+                ->findOrFail($id);
+    
+        return view('admin.matakuliah-detail', [
+            'matkul' => $matkul,
+            'presences' => $matkul->presences,
+            'mahasiswa_count' => $matkul->mahasiswas_count // tambahkan ini
+        ]);
     }
 }

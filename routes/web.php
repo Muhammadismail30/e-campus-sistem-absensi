@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MataKuliahController;
 use App\Http\Controllers\Admin\DatapenggunaController;
 use App\Http\Controllers\Admin\PresensiController;
+use App\Http\Controllers\Admin\AbsensiController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PresensiController as MahasiswaPresensiController;
 use App\Http\Controllers\Mahasiswa\MataKuliahController as MahasiswaMataKuliahController;
@@ -19,23 +20,28 @@ use App\Http\Controllers\Dosen\JadwalController as DosenJadwalController;
 use App\Http\Controllers\Dosen\AbsensiController as DosenAbsensiController;
 use App\Http\Controllers\Mahasiswa\AbsensiController as MahasiswaAbsensiController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
  // Diperlukan untuk Auth::user() dan auth()->check()
 
 // Route home - redirect ke dashboard sesuai role jika sudah login, jika belum tampilkan welcome
 Route::get('/', function () {
-    if (auth()->check()) {
-        $role = auth()->user()->role;
+    if (Auth::check()) {
+        $role = Auth::user()->role;
         // Pastikan route role.dashboard ada, jika tidak fallback ke /login
         try {
             return redirect()->route($role . '.dashboard');
         } catch (\Exception $e) {
             // Jika role dashboard tidak ditemukan, fallback ke login atau dashboard umum
             // Ini bisa terjadi jika role tidak memiliki dashboard terdefinisi atau ada kesalahan ketik
-            Auth::logout(); // Logout pengguna untuk menghindari loop redirect jika terjadi masalah
-            return redirect()->route('login')->withErrors('Konfigurasi rute peran Anda bermasalah.');
+            Auth::logout();
+            return redirect()->route('login')->withErrors([
+                'auth' => 'Terjadi kesalahan konfigurasi role'
+            ]);
         }
     }
-    return view('welcome'); // Asumsikan view 'welcome.blade.php' ada
+    return redirect()->route('login');// Asumsikan view 'welcome.blade.php' ada
 })->name('home');
 
 // Auth routes (misalnya dari Laravel Breeze/Jetstream)
@@ -43,19 +49,19 @@ require __DIR__.'/auth.php';
 
 
 Route::get('/dashboard', function () {
-    if (auth()->check()) {
-        $role = auth()->user()->role;
-
-        try {
-            return redirect()->route($role . '.dashboard');
-        } catch (\Exception $e) {
-            Auth::logout();
-            return redirect()->route('login')->withErrors('Konfigurasi rute peran Anda bermasalah.');
-        }
+    if (!Auth::check()) {
+        return redirect()->route('login');
     }
-    // Jika tidak terautentikasi, arahkan ke login
-    return redirect()->route('login');
-})->middleware(['auth', 'verified'])->name('dashboard'); 
+
+    try {
+        return redirect()->route(Auth::user()->role . '.dashboard');
+    } catch (\Exception $e) {
+        Auth::logout();
+        return redirect()->route('login')->withErrors([
+            'auth' => 'Konfigurasi role tidak valid'
+        ]);
+    }
+})->middleware(['auth', 'verified'])->name('dashboard');
 // Profile routes - untuk semua role yang terautentikasi dan terverifikasi
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -73,6 +79,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
     Route::get('/datapengguna', [DatapenggunaController::class, 'index'])->name('admin.datapengguna');
     Route::get('/matakuliah/{id}', [MataKuliahController::class, 'show'])->name('admin.matakuliah.detail');
     Route::get('/presensi', [PresensiController::class, 'index'])->name('admin.presensi');
+    Route::get('/absensi/{presence}', [AbsensiController::class, 'show'])
+         ->name('admin.absensi.detail');
 });
 
 // Route khusus dosen

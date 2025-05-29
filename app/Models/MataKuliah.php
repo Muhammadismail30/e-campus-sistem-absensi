@@ -19,6 +19,19 @@ class MataKuliah extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Tambahkan relasi ini
+    public function presences()
+    {
+        return $this->hasMany(Presence::class, 'matkul_id');
+    }
+
+    // Jika perlu relasi ke mahasiswa
+    public function mahasiswas()
+    {
+        return $this->belongsToMany(Mahasiswa::class, 'mahasiswa_matkul', 'matkul_id', 'mahasiswa_id')
+            -> withTimestamps();
+    }
+
     
 
     // public function absensi()
