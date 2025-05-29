@@ -1,5 +1,8 @@
 <?php
 
+// File: routes/web.php
+
+// Import semua controller yang dibutuhkan dari file pertama
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MataKuliahController;
@@ -14,21 +17,44 @@ use App\Http\Controllers\Dosen\PresensiController as DosenPresensiController;
 use App\Http\Controllers\Dosen\MataKuliahController as DosenMataKuliahController;
 use App\Http\Controllers\Dosen\JadwalController as DosenJadwalController;
 use Illuminate\Support\Facades\Route;
+ // Diperlukan untuk Auth::user() dan auth()->check()
 
+// Route home - redirect ke dashboard sesuai role jika sudah login, jika belum tampilkan welcome
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        // Pastikan route role.dashboard ada, jika tidak fallback ke /login
+        try {
+            return redirect()->route($role . '.dashboard');
+        } catch (\Exception $e) {
+            // Jika role dashboard tidak ditemukan, fallback ke login atau dashboard umum
+            // Ini bisa terjadi jika role tidak memiliki dashboard terdefinisi atau ada kesalahan ketik
+            Auth::logout(); // Logout pengguna untuk menghindari loop redirect jika terjadi masalah
+            return redirect()->route('login')->withErrors('Konfigurasi rute peran Anda bermasalah.');
+        }
+    }
+    return view('welcome'); // Asumsikan view 'welcome.blade.php' ada
+})->name('home');
 
+// Auth routes (misalnya dari Laravel Breeze/Jetstream)
 require __DIR__.'/auth.php';
 
-// Redirect umum setelah login
-use Illuminate\Support\Facades\Auth;
 
-Route::get('/dashboard', function() {
-    return redirect()->route(Auth::user()->role . '.dashboard');
-})->middleware(['auth', 'verified']);
+Route::get('/dashboard', function () {
+    if (auth()->check()) {
+        $role = auth()->user()->role;
 
-// Route untuk semua role yang terautentikasi
+        try {
+            return redirect()->route($role . '.dashboard');
+        } catch (\Exception $e) {
+            Auth::logout();
+            return redirect()->route('login')->withErrors('Konfigurasi rute peran Anda bermasalah.');
+        }
+    }
+    // Jika tidak terautentikasi, arahkan ke login
+    return redirect()->route('login');
+})->middleware(['auth', 'verified'])->name('dashboard'); 
+// Profile routes - untuk semua role yang terautentikasi dan terverifikasi
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -64,4 +90,3 @@ Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->
     Route::get('/jadwal', [MahasiswaJadwalController::class, 'index'])->name('mahasiswa.jadwal');
     Route::get('/presensi', [MahasiswaPresensiController::class, 'index'])->name('mahasiswa.presensi');
 });
-
