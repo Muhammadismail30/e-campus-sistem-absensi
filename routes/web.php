@@ -13,6 +13,8 @@ use App\Http\Controllers\Dosen\DashboardController as DosenDashboardController;
 use App\Http\Controllers\Dosen\PresensiController as DosenPresensiController;
 use App\Http\Controllers\Dosen\MataKuliahController as DosenMataKuliahController;
 use App\Http\Controllers\Dosen\JadwalController as DosenJadwalController;
+use App\Http\Controllers\Dosen\AbsensiController as DosenAbsensiController;
+use App\Http\Controllers\Mahasiswa\AbsensiController as MahasiswaAbsensiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,9 +53,17 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
 Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(function () {
     Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dosen.dashboard');
     Route::get('/matakuliah', [DosenMataKuliahController::class, 'index'])->name('dosen.matakuliah');
-    Route::get('/matakuliah/{matkul}/manage', [DosenMataKuliahController::class, 'show'])->name('dosen.matakuliah.manage');
+    Route::get('/matakuliah/{matkul}/manage', [DosenAbsensiController::class, 'manageMatkul'])->name('dosen.matakuliah.manage');
     Route::get('/jadwal', [DosenJadwalController::class, 'index'])->name('dosen.jadwal');
     Route::get('/presensi', [DosenPresensiController::class, 'index'])->name('dosen.presensi');
+    
+    // Route sistem absensi
+    Route::prefix('absensi')->group(function () {
+        Route::post('/generate/{matkul}', [DosenAbsensiController::class, 'generateAbsensi'])->name('dosen.generate.absensi');
+        Route::post('/{absensi}/toggle', [DosenAbsensiController::class, 'toggleAbsensi'])->name('dosen.absensi.toggle');
+        Route::put('/{id}', [DosenAbsensiController::class, 'update'])->name('dosen.absensi.update'); // Ubah path menjadi /{id}
+        Route::get('/{absensi}/barcode', [DosenAbsensiController::class, 'showBarcode'])->name('dosen.absensi.barcode');
+    });
 });
 
 // Route khusus mahasiswa
@@ -63,5 +73,8 @@ Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->
     Route::get('/matakuliah/{id}/enter', [MahasiswaMataKuliahController::class, 'enter'])->name('mahasiswa.matakuliah.enter');
     Route::get('/jadwal', [MahasiswaJadwalController::class, 'index'])->name('mahasiswa.jadwal');
     Route::get('/presensi', [MahasiswaPresensiController::class, 'index'])->name('mahasiswa.presensi');
+    
+    // Tambahan route untuk scan barcode
+    Route::get('/scan/{token}', [MahasiswaAbsensiController::class, 'scanBarcode'])
+         ->name('mahasiswa.scan.absensi');
 });
-

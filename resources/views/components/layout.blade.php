@@ -25,7 +25,9 @@
     <x-header></x-header>
     <x-footer></x-footer>
 
+
     </div>
+    @stack('scripts')
 
 </body>
 </html>
