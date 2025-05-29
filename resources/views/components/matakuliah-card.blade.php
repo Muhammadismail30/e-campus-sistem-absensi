@@ -4,20 +4,14 @@
     'role' => auth()->user()->role ?? 'guest'
 ])
 
-{{-- Pastikan $matkul, $dosens sudah didefinisikan di controller --}}
-{{-- Contoh penggunaan: <x-matakuliah-card :matkul="$matkul" :dosens="$dosens" /> --}}
-
 {{-- Card untuk menampilkan detail mata kuliah --}}
-{{-- Menggunakan Alpine.js untuk interaksi --}}
-
 <div class="bg-[#DFF5FF] rounded-lg shadow-md border border-black p-4 relative" x-data="{ 
     showEdit: false, 
     showDelete: false,
     showDetail: false,
     showMasukModal: false,
-    kodeMatkul: ''
+    kodeMatkul: '' {{-- kodeMatkul dikembalikan untuk input mahasiswa --}}
 }">
-    <!-- Mode Tampilan -->
     <div x-show="!showEdit && !showDetail">
         <div class="flex justify-between items-center mb-2">
             <div>
@@ -47,7 +41,6 @@
             </div>
         </div>
 
-        <!-- Tambahan: Informasi Dosen Pengampu -->
         <div class="mt-4 border-t pt-4 border-black">
             <div class="text-gray-500">Dosen Pengampu</div>
             <div class="text-base font-bold flex items-center gap-2">
@@ -59,10 +52,9 @@
             </div>
         </div>
 
-        <!-- Buttons berdasarkan role -->
         <div class="flex justify-end mt-4 gap-2">
             @if($role === 'admin')
-                <!-- Tombol untuk Admin -->
+                {{-- Tombol untuk Admin --}}
                 <button @click="showEdit = true" class="bg-blue-500 hover:bg-[#00B1CB] text-white text-sm font-semibold py-1 px-3 rounded">
                     ✏️ Edit
                 </button>
@@ -74,17 +66,13 @@
                     🔍 Detail
                 </a>
             @elseif($role === 'dosen')
-                <!-- Tombol untuk Dosen -->
-
+                {{-- Tombol untuk Dosen --}}
                 <button @click="showMasukModal = true" 
                         class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-3 rounded">
                     🚪 Masuk
                 </button>
             @elseif($role === 'mahasiswa')
-                <!-- Tombol untuk Mahasiswa -->
-                <button @click="showDetail = true" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-3 rounded">
-                    📚 Lihat
-                </button>
+                {{-- Tombol untuk Mahasiswa (tetap membuka modal) --}}
                 <button @click="showMasukModal = true" 
                         class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded">
                     🚪 Masuk
@@ -93,13 +81,13 @@
         </div>
     </div>
 
-    <!-- Mode Edit (Hanya untuk Admin) -->
+    {{-- Mode Edit (Hanya untuk Admin) --}}
     @if($role === 'admin')
         <div x-show="showEdit" x-cloak class="bg-[#DFF5FF] p-4 rounded-lg mt-4 border border-black">
+            {{-- Form Edit Admin (Tidak diubah) --}}
             <form method="POST" action="{{ route('matakuliah.update', $matkul->id) }}">
                 @csrf
                 @method('PUT')
-
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-medium mb-1" for="nama">Nama Matkul</label>
                     <input name="nama" value="{{ $matkul->nama }}" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300">
@@ -112,8 +100,6 @@
                     <label class="block text-gray-700 text-sm font-medium mb-1" for="sks">SKS</label>
                     <input name="sks" value="{{ $matkul->sks }}" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300">
                 </div>
-                
-                <!-- Tambahan: Dropdown Dosen Pengampu di Form Edit -->
                 @if($dosens)
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-medium mb-1" for="dosen_id">Dosen Pengampu</label>
@@ -127,16 +113,14 @@
                         </select>
                     </div>
                 @endif
-
                 <div class="flex justify-end space-x-2">
                     <button type="button" @click="showEdit = false" class="bg-gray-500 text-white text-sm px-3 py-1 rounded">Batal</button>
                     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">Simpan</button>
                 </div>
             </form>
         </div>
-
-        <!-- Mode Hapus (Hanya untuk Admin) -->
         <div x-show="showDelete" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            {{-- Modal Hapus Admin (Tidak diubah) --}}
             <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-black">
                 <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
                 <p class="my-4">Yakin ingin menghapus mata kuliah <strong>{{ $matkul->nama }}</strong>?</p>
@@ -152,18 +136,18 @@
         </div>
     @endif
 
-    <!-- Modal Masuk untuk Dosen/Mahasiswa -->
     @if($role === 'dosen' || $role === 'mahasiswa')
-        <div x-show="showMasukModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div x-show="showMasukModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-cloak>
             <div class="bg-white rounded-lg p-6 max-w-md w-full">
                 <h3 class="font-bold text-lg mb-4">
                     @if($role === 'dosen')
                         Manajemen Kelas {{ $matkul->nama }}
-                    @else
+                    @else {{-- Mahasiswa --}}
                         Masuk Kelas {{ $matkul->nama }}
                     @endif
                 </h3>
                 
+                {{-- Input kodeMatkul untuk mahasiswa DIKEMBALIKAN --}}
                 @if($role === 'mahasiswa')
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-medium mb-1">Masukkan Kode Matkul</label>
@@ -173,7 +157,7 @@
 
                 <div class="flex justify-between items-center">
                     <button @click="showMasukModal = false" 
-                            class="bg-gray-500 text-white text-sm px-3 py-1 rounded">
+                            class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-3 py-1 rounded">
                         Batal
                     </button>
                     
@@ -182,7 +166,7 @@
                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
                             Masuk Kelas
                         </a>
-                    @else
+                    @else {{-- Logika untuk mahasiswa dikembalikan ke tombol "Konfirmasi" dengan validasi kode --}}
                         <button @click="if(kodeMatkul === '{{ $matkul->kode }}') { window.location.href = '{{ route('mahasiswa.matakuliah.enter', $matkul->id) }}' } else { alert('Kode matkul salah!') }" 
                                 class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
                             Konfirmasi
@@ -193,9 +177,10 @@
         </div>
     @endif
 
-    <!-- Mode Detail (Untuk Dosen dan Mahasiswa) -->
+    {{-- Mode Detail (Untuk Dosen dan Mahasiswa) --}}
     @if($role === 'dosen' || $role === 'mahasiswa')
         <div x-show="showDetail" x-cloak class="bg-white p-6 rounded-lg border border-black">
+            {{-- Konten detail (Tidak diubah) --}}
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-gray-800">Detail Mata Kuliah</h3>
                 <button @click="showDetail = false" class="text-gray-500 hover:text-gray-700">
@@ -204,7 +189,6 @@
                     </svg>
                 </button>
             </div>
-            
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-3 rounded">
@@ -216,7 +200,6 @@
                         <div class="font-semibold">{{ $matkul->kode }}</div>
                     </div>
                 </div>
-                
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-3 rounded">
                         <div class="text-sm text-gray-500">SKS</div>
@@ -233,62 +216,34 @@
                         </div>
                     </div>
                 </div>
-
                 @if($role === 'mahasiswa')
-                    <!-- Konten tambahan untuk mahasiswa -->
                     <div class="mt-6 border-t pt-4">
                         <h4 class="font-semibold mb-3">Informasi Pembelajaran</h4>
+                        {{-- Konten Informasi Pembelajaran Mahasiswa --}}
                         <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Status Enrollment:</span>
-                                <span class="text-green-600 font-medium">Terdaftar</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Jadwal:</span>
-                                <span>Senin, 08:00 - 10:30</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Ruangan:</span>
-                                <span>R.101</span>
-                            </div>
+                            <div class="flex justify-between"><span>Status Enrollment:</span><span class="text-green-600 font-medium">Terdaftar</span></div>
+                            <div class="flex justify-between"><span>Jadwal:</span><span>Senin, 08:00 - 10:30</span></div>
+                            <div class="flex justify-between"><span>Ruangan:</span><span>R.101</span></div>
                         </div>
-                        
-                        <!-- Tombol aksi untuk mahasiswa -->
                         <div class="mt-4 flex gap-2">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded">
-                                📖 Lihat Materi
-                            </button>
-                            <button class="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded">
-                                📝 Tugas
-                            </button>
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded">📖 Lihat Materi</button>
+                            <button class="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded">📝 Tugas</button>
                         </div>
                     </div>
                 @elseif($role === 'dosen')
-                    <!-- Konten tambahan untuk dosen -->
                     <div class="mt-6 border-t pt-4">
                         <h4 class="font-semibold mb-3">Informasi Pengajaran</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Jumlah Mahasiswa:</span>
-                                <span class="font-medium">32 mahasiswa</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Jadwal:</span>
-                                <span>Senin, 08:00 - 10:30</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Ruangan:</span>
-                                <span>R.101</span>
-                            </div>
+                        {{-- Konten Informasi Pengajaran Dosen --}}
+                         <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Jumlah Mahasiswa:</span><span class="font-medium">32 mahasiswa</span></div>
+                            <div class="flex justify-between"><span>Jadwal:</span><span>Senin, 08:00 - 10:30</span></div>
+                            <div class="flex justify-between"><span>Ruangan:</span><span>R.101</span></div>
                         </div>
                     </div>
                 @endif
             </div>
-            
             <div class="flex justify-end mt-6">
-                <button @click="showDetail = false" class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded">
-                    Tutup
-                </button>
+                <button @click="showDetail = false" class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded">Tutup</button>
             </div>
         </div>
     @endif

@@ -3,39 +3,40 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request; // Tidak digunakan jika tidak ada input request yang diproses
 use App\Models\MataKuliah;
-use App\Models\Absensi;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth; // Tidak digunakan lagi setelah penyederhanaan
 
 class MataKuliahController extends Controller
 {
-    //
+    /**
+     * Menampilkan daftar mata kuliah yang tersedia untuk mahasiswa.
+     */
     public function index()
-{
-    $matkuls = MataKuliah::all(); // ambil semua mata kuliah langsung dari tabel
-
-    return view('mahasiswa.matakuliah', [
-        'title' => 'Mata Kuliah Mahasiswa',
-        'active' => 'mata kuliah',
-        'matkuls' => $matkuls,
-    ]);
-}
-
-    public function enter($id)
     {
-        $matkul = MataKuliah::with(['materi', 'tugas', 'absensi'])->findOrFail($id);
-        $absensi_aktif = $matkul->absensi()->where('status', 'aktif')->first();
-        $presensi_count = Auth::user()->mahasiswa->presensi()->whereIn('absensi_id', $matkul->absensi->pluck('id'))->count();
-        $total_sesi = $matkul->absensi->count();
-        
+        $matkuls = MataKuliah::all();
+
+        return view('mahasiswa.matakuliah', [
+            'title' => 'Mata Kuliah Mahasiswa',
+            'active' => 'mata kuliah',
+            'matkuls' => $matkuls,
+        ]);
+    }
+
+    /**
+     * Menampilkan halaman detail mata kuliah untuk mahasiswa.
+     * Hanya meneruskan objek $matkul ke view.
+     *
+     * @param  \App\Models\MataKuliah  $matkul
+     * @return \Illuminate\View\View
+     */
+    public function show(MataKuliah $matkul) // Menggunakan Route-Model Binding
+    {
+        // Langsung meneruskan objek $matkul yang sudah di-resolve oleh Laravel
+        // ke view 'mahasiswa.enter-matakuliah'.
+        // Tidak ada lagi pengambilan data materi, tugas, atau absensi di sini.
         return view('mahasiswa.enter-matakuliah', [
             'matkul' => $matkul,
-            'materi' => $matkul->materi,
-            'tugas' => $matkul->tugas,
-            'absensi_aktif' => $absensi_aktif,
-            'presensi_count' => $presensi_count,
-            'total_sesi' => $total_sesi
         ]);
     }
 }
