@@ -60,7 +60,7 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(fu
 Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->group(function () {
     Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('mahasiswa.dashboard');
     Route::get('/matakuliah', [MahasiswaMataKuliahController::class, 'index'])->name('mahasiswa.matakuliah');
-    Route::get('/matakuliah/{id}/enter', [MahasiswaMataKuliahController::class, 'enter'])->name('mahasiswa.matakuliah.enter');
+    Route::get('/matakuliah/{id}/enter', [MahasiswaMataKuliahController::class, 'show'])->name('mahasiswa.matakuliah.enter');
     Route::get('/jadwal', [MahasiswaJadwalController::class, 'index'])->name('mahasiswa.jadwal');
     Route::get('/presensi', [MahasiswaPresensiController::class, 'index'])->name('mahasiswa.presensi');
 });
