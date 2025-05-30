@@ -77,6 +77,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
     Route::put('/matakuliah/{matkul}', [MataKuliahController::class, 'update'])->name('matakuliah.update');
     Route::delete('/matakuliah/{matkul}', [MataKuliahController::class, 'destroy'])->name('matakuliah.destroy');
     Route::get('/datapengguna', [DatapenggunaController::class, 'index'])->name('admin.datapengguna');
+    Route::post('/datapengguna', [DatapenggunaController::class, 'store'])->name('admin.datapengguna.store');
+    Route::delete('/datapengguna/{id}', [DatapenggunaController::class, 'destroy'])->name('admin.datapengguna.delete');
     Route::get('/matakuliah/{id}', [MataKuliahController::class, 'show'])->name('admin.matakuliah.detail');
     Route::get('/presensi', [PresensiController::class, 'index'])->name('admin.presensi');
     Route::get('/absensi/{presence}', [AbsensiController::class, 'show'])
