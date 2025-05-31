@@ -24,8 +24,7 @@ class Mahasiswa extends Model
     // app/Models/Mahasiswa.php
     public function mataKuliahs()
     {
-        return $this->belongsToMany(MataKuliah::class, 'mahasiswa_matkul', 'mahasiswa_id', 'matkul_id')
-                    ->withTimestamps();
+        return $this->belongsToMany(MataKuliah::class, 'mahasiswa_matkul', 'mahasiswa_id', 'matkul_id');
     }
 
 }

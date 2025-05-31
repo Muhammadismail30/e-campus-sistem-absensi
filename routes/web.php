@@ -115,3 +115,19 @@ Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->
          ->name('mahasiswa.scan.absensi');
 
 });
+
+
+Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
+    // Scan barcode untuk absensi
+    Route::get('/absensi/scan/{token}', [AbsensiController::class, 'scanBarcode'])->name('mahasiswa.absensi.scan');
+
+    // Form halaman join mata kuliah
+    Route::get('/absensi/join', [AbsensiController::class, 'showJoinForm'])->name('mahasiswa.absensi.join.form');
+
+    // Proses join mata kuliah (submit form)
+    Route::post('/absensi/join', [AbsensiController::class, 'joinMatkul'])->name('mahasiswa.absensi.join');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/absensi/store', [AbsensiController::class, 'store'])->name('absensi.store');
+});

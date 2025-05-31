@@ -19,10 +19,10 @@ class Presence extends Model
         'is_active' => 'boolean'
     ];
 
-    public function matkul()
-    {
-        return $this->belongsTo(MataKuliah::class);
-    }
+   public function mataKuliah()
+{
+    return $this->belongsTo(MataKuliah::class, 'matakuliah_id');
+}
 
     public function attendances()
     {
