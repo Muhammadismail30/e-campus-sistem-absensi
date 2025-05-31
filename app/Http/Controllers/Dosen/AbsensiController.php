@@ -15,7 +15,7 @@ class AbsensiController extends Controller
         $matkul = MataKuliah::findOrFail($matkulId);
         $absensis = Presence::where('matkul_id', $matkulId)->get();
         
-        return view('dosen.manage-matakuliah', [ // Pastikan nama view sesuai
+        return view('dosen.manage-matakuliah', [
             'matkul' => $matkul,
             'absensis' => $absensis
         ]);
@@ -72,7 +72,7 @@ class AbsensiController extends Controller
 
     public function showBarcode($id)
     {
-        $absensi = Presence::with('matkul')->findOrFail($id);
+        $absensi = Presence::with('mataKuliah')->findOrFail($id); // Gunakan 'mataKuliah' bukan 'matkul'
         return view('dosen.barcode', compact('absensi'));
     }
 }

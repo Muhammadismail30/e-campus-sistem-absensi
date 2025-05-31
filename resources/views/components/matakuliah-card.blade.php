@@ -4,13 +4,12 @@
     'role' => auth()->user()->role ?? 'guest'
 ])
 
-{{-- Card untuk menampilkan detail mata kuliah --}}
 <div class="bg-[#DFF5FF] rounded-lg shadow-md border border-black p-4 relative" x-data="{ 
     showEdit: false, 
     showDelete: false,
     showDetail: false,
     showMasukModal: false,
-    kodeMatkul: '' {{-- kodeMatkul dikembalikan untuk input mahasiswa --}}
+    kodeMatkul: ''
 }">
     <div x-show="!showEdit && !showDetail">
         <div class="flex justify-between items-center mb-2">
@@ -54,7 +53,6 @@
 
         <div class="flex justify-end mt-4 gap-2">
             @if($role === 'admin')
-                {{-- Tombol untuk Admin --}}
                 <button @click="showEdit = true" class="bg-blue-500 hover:bg-[#00B1CB] text-white text-sm font-semibold py-1 px-3 rounded">
                     ✏️ Edit
                 </button>
@@ -66,13 +64,11 @@
                     🔍 Detail
                 </a>
             @elseif($role === 'dosen')
-                {{-- Tombol untuk Dosen --}}
                 <button @click="showMasukModal = true" 
                         class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-3 rounded">
                     🚪 Masuk
                 </button>
             @elseif($role === 'mahasiswa')
-                {{-- Tombol untuk Mahasiswa (tetap membuka modal) --}}
                 <button @click="showMasukModal = true" 
                         class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded">
                     🚪 Masuk
@@ -81,10 +77,8 @@
         </div>
     </div>
 
-    {{-- Mode Edit (Hanya untuk Admin) --}}
     @if($role === 'admin')
         <div x-show="showEdit" x-cloak class="bg-[#DFF5FF] p-4 rounded-lg mt-4 border border-black">
-            {{-- Form Edit Admin (Tidak diubah) --}}
             <form method="POST" action="{{ route('matakuliah.update', $matkul->id) }}">
                 @csrf
                 @method('PUT')
@@ -120,7 +114,6 @@
             </form>
         </div>
         <div x-show="showDelete" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            {{-- Modal Hapus Admin (Tidak diubah) --}}
             <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-black">
                 <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
                 <p class="my-4">Yakin ingin menghapus mata kuliah <strong>{{ $matkul->nama }}</strong>?</p>
@@ -142,45 +135,59 @@
                 <h3 class="font-bold text-lg mb-4">
                     @if($role === 'dosen')
                         Manajemen Kelas {{ $matkul->nama }}
-                    @else {{-- Mahasiswa --}}
+                    @else
                         Masuk Kelas {{ $matkul->nama }}
                     @endif
                 </h3>
                 
-                {{-- Input kodeMatkul untuk mahasiswa DIKEMBALIKAN --}}
                 @if($role === 'mahasiswa')
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-medium mb-1">Masukkan Kode Matkul</label>
-                    <input x-model="kodeMatkul" type="text" class="w-full border rounded px-3 py-2 text-sm" placeholder="Masukkan kode mata kuliah">
-                </div>
-                @endif
-
-                <div class="flex justify-between items-center">
-                    <button @click="showMasukModal = false" 
-                            class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-3 py-1 rounded">
-                        Batal
-                    </button>
-                    
-                    @if($role === 'dosen')
+                    @auth
+                        @php
+                            $mahasiswa = Auth::user()->mahasiswa;
+                            $isEnrolled = $mahasiswa->mataKuliahs()->where('matkul_id', $matkul->id)->exists();
+                        @endphp
+                        @if($isEnrolled)
+                            <p class="text-green-600 mb-4">Anda sudah terdaftar di mata kuliah ini.</p>
+                            <div class="flex justify-end">
+                                <a href="{{ route('mahasiswa.matakuliah.enter', $matkul->id) }}"
+                                   class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                                    Masuk Kelas
+                                </a>
+                            </div>
+                        @else
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-medium mb-1">Masukkan Kode Matkul</label>
+                                <input x-model="kodeMatkul" type="text" class="w-full border rounded px-3 py-2 text-sm" placeholder="Masukkan kode mata kuliah">
+                            </div>
+                            <form action="{{ route('mahasiswa.matakuliah.confirm', $matkul->id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="kodeMatkul" x-model="kodeMatkul">
+                                <div class="flex justify-between items-center">
+                                    <button type="button" @click="showMasukModal = false" 
+                                            class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-3 py-1 rounded">
+                                        Batal
+                                    </button>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                                        Konfirmasi
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
+                    @endauth
+                @else
+                    <div class="flex justify-end">
                         <a href="{{ route('dosen.matakuliah.manage', $matkul->id) }}" 
                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
                             Masuk Kelas
                         </a>
-                    @else {{-- Logika untuk mahasiswa dikembalikan ke tombol "Konfirmasi" dengan validasi kode --}}
-                        <button @click="if(kodeMatkul === '{{ $matkul->kode }}') { window.location.href = '{{ route('mahasiswa.matakuliah.enter', $matkul->id) }}' } else { alert('Kode matkul salah!') }" 
-                                class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
-                            Konfirmasi
-                        </button>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     @endif
 
-    {{-- Mode Detail (Untuk Dosen dan Mahasiswa) --}}
     @if($role === 'dosen' || $role === 'mahasiswa')
         <div x-show="showDetail" x-cloak class="bg-white p-6 rounded-lg border border-black">
-            {{-- Konten detail (Tidak diubah) --}}
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-gray-800">Detail Mata Kuliah</h3>
                 <button @click="showDetail = false" class="text-gray-500 hover:text-gray-700">
@@ -219,7 +226,6 @@
                 @if($role === 'mahasiswa')
                     <div class="mt-6 border-t pt-4">
                         <h4 class="font-semibold mb-3">Informasi Pembelajaran</h4>
-                        {{-- Konten Informasi Pembelajaran Mahasiswa --}}
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between"><span>Status Enrollment:</span><span class="text-green-600 font-medium">Terdaftar</span></div>
                             <div class="flex justify-between"><span>Jadwal:</span><span>Senin, 08:00 - 10:30</span></div>
@@ -233,8 +239,7 @@
                 @elseif($role === 'dosen')
                     <div class="mt-6 border-t pt-4">
                         <h4 class="font-semibold mb-3">Informasi Pengajaran</h4>
-                        {{-- Konten Informasi Pengajaran Dosen --}}
-                         <div class="space-y-2 text-sm">
+                        <div class="space-y-2 text-sm">
                             <div class="flex justify-between"><span>Jumlah Mahasiswa:</span><span class="font-medium">32 mahasiswa</span></div>
                             <div class="flex justify-between"><span>Jadwal:</span><span>Senin, 08:00 - 10:30</span></div>
                             <div class="flex justify-between"><span>Ruangan:</span><span>R.101</span></div>

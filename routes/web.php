@@ -89,7 +89,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
 Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(function () {
     Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dosen.dashboard');
     Route::get('/matakuliah', [DosenMataKuliahController::class, 'index'])->name('dosen.matakuliah');
-    Route::get('/matakuliah/{matkul}/manage', [DosenAbsensiController::class, 'manageMatkul'])->name('dosen.matakuliah.manage');
+    Route::get('/matakuliah/{matkul}', [DosenMataKuliahController::class, 'show'])->name('dosen.matakuliah.manage');
     Route::get('/jadwal', [DosenJadwalController::class, 'index'])->name('dosen.jadwal');
     Route::get('/presensi', [DosenPresensiController::class, 'index'])->name('dosen.presensi');
     
@@ -106,20 +106,17 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(fu
 Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->group(function () {
     Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('mahasiswa.dashboard');
     Route::get('/matakuliah', [MahasiswaMataKuliahController::class, 'index'])->name('mahasiswa.matakuliah');
-    Route::get('/matakuliah/{id}/enter', [MahasiswaMataKuliahController::class, 'show'])->name('mahasiswa.matakuliah.enter');
+    Route::get('/matakuliah/{matkul}', [MahasiswaMataKuliahController::class, 'show'])->name('mahasiswa.matakuliah.enter');
+    Route::post('/matakuliah/{matkul}/confirm', [MahasiswaMataKuliahController::class, 'confirmRegistration'])->name('mahasiswa.matakuliah.confirm');
     Route::get('/jadwal', [MahasiswaJadwalController::class, 'index'])->name('mahasiswa.jadwal');
     Route::get('/presensi', [MahasiswaPresensiController::class, 'index'])->name('mahasiswa.presensi');
-    
-    // Tambahan route untuk scan barcode
-    Route::get('/scan/{token}', [MahasiswaAbsensiController::class, 'scanBarcode'])
-         ->name('mahasiswa.scan.absensi');
 
 });
 
 
 Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     // Scan barcode untuk absensi
-    Route::get('/absensi/scan/{token}', [AbsensiController::class, 'scanBarcode'])->name('mahasiswa.absensi.scan');
+    Route::get('/absensi/scan/{token}', [MahasiswaAbsensiController::class, 'scanBarcode'])->name('mahasiswa.absensi.scan');
 
     // Form halaman join mata kuliah
     Route::get('/absensi/join', [AbsensiController::class, 'showJoinForm'])->name('mahasiswa.absensi.join.form');
