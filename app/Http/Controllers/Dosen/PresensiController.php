@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MataKuliah;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class PresensiController extends Controller
 {
@@ -38,4 +40,42 @@ class PresensiController extends Controller
             'matkul' => $matkul,
         ]);
     }
+
+
+
+### 2. **Atur isi `rekap()` supaya cocok**
+
+public function rekap($matkulId)
+{
+    // Ambil MataKuliah dengan presensi dan attendances
+    $matkul = MataKuliah::with(['presences.attendances.mahasiswa.user'])->findOrFail($matkulId);
+
+    // Ambil attendances untuk semua presensi
+    $presences = $matkul->presences->flatMap(function ($presence) {
+        return $presence->attendances; // Ambil semua attendance dari presensi
+    });
+
+    return view('dosen.rekap_presensi', [
+        'title' => 'Rekap Presensi',
+        'matkul' => $matkul,
+        'presences' => $presences,
+    ]);
+}
+
+public function downloadRekapPdf($matkulId)
+{
+    // Ambil data MataKuliah dengan presensi dan attendances yang dibutuhkan
+    $matkul = MataKuliah::with(['presences.attendances.mahasiswa.user'])->findOrFail($matkulId);
+    
+    // Pastikan data yang dikirimkan lengkap
+    $pdf = Pdf::loadView('dosen.rekap_presensi_pdf', [
+        'matkul' => $matkul,
+        'mahasiswas' => $matkul->mahasiswas,
+    ]);
+
+    return $pdf->download('rekap-presensi-' . $matkul->kode . '.pdf');
+}
+
+
+
 }
