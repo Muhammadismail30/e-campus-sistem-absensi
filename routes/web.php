@@ -92,6 +92,9 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(fu
     Route::get('/matakuliah/{matkul}', [DosenMataKuliahController::class, 'show'])->name('dosen.matakuliah.manage');
     Route::get('/jadwal', [DosenJadwalController::class, 'index'])->name('dosen.jadwal');
     Route::get('/presensi', [DosenPresensiController::class, 'index'])->name('dosen.presensi');
+    Route::get('/presensi/{matkul}/mahasiswa', [DosenPresensiController::class, 'mahasiswa'])->name('dosen.presensi.mahasiswa');
+    Route::get('/presensi/{matkul}/upload', [DosenPresensiController::class, 'upload'])->name('dosen.presensi.upload');
+    Route::get('/presensi/{matkul}/rekap', [DosenPresensiController::class, 'rekap'])->name('dosen.presensi.rekap');
     
     // Route sistem absensi
     Route::prefix('absensi')->group(function () {
