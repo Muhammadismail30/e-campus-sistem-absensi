@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\MataKuliah;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Presence;
+use Illuminate\Support\Str;
 
 
 class PresensiController extends Controller
@@ -45,37 +47,62 @@ class PresensiController extends Controller
 
 ### 2. **Atur isi `rekap()` supaya cocok**
 
-public function rekap($matkulId)
-{
-    // Ambil MataKuliah dengan presensi dan attendances
-    $matkul = MataKuliah::with(['presences.attendances.mahasiswa.user'])->findOrFail($matkulId);
+    public function rekap($matkulId)
+    {
+        $matkul = MataKuliah::with(['mahasiswas.user', 'presences' => function($query) {
+                        $query->withCount('attendances')
+                            ->orderBy('pertemuan_ke');
+                    }])
+                    ->findOrFail($matkulId);
 
-    // Ambil attendances untuk semua presensi
-    $presences = $matkul->presences->flatMap(function ($presence) {
-        return $presence->attendances; // Ambil semua attendance dari presensi
-    });
+        // Pastikan ada 16 pertemuan
+        $this->ensure16Pertemuan($matkul);
 
-    return view('dosen.rekap_presensi', [
-        'title' => 'Rekap Presensi',
-        'matkul' => $matkul,
-        'presences' => $presences,
-    ]);
-}
+        // Reload to get the updated presences with counts
+        $matkul->load(['presences' => function($query) {
+            $query->withCount('attendances')
+                ->orderBy('pertemuan_ke');
+        }]);
 
-public function downloadRekapPdf($matkulId)
-{
-    // Ambil data MataKuliah dengan presensi dan attendances yang dibutuhkan
-    $matkul = MataKuliah::with(['presences.attendances.mahasiswa.user'])->findOrFail($matkulId);
-    
-    // Pastikan data yang dikirimkan lengkap
-    $pdf = Pdf::loadView('dosen.rekap_presensi_pdf', [
-        'matkul' => $matkul,
-        'mahasiswas' => $matkul->mahasiswas,
-    ]);
+        return view('dosen.rekap_presensi', [
+            'matkul' => $matkul,
+            'presences' => $matkul->presences
+        ]);
+    }
 
-    return $pdf->download('rekap-presensi-' . $matkul->kode . '.pdf');
-}
+    public function downloadRekapPdf($matkulId)
+    {
+        $matkul = MataKuliah::with(['mahasiswas.user', 'presences.attendances.mahasiswa'])
+                    ->findOrFail($matkulId);
 
+        // Pastikan ada 16 pertemuan
+        $this->ensure16Pertemuan($matkul);
+
+        $pdf = PDF::loadView('dosen.rekap_presensi_pdf', [
+            'matkul' => $matkul,
+            'presences' => $matkul->presences()->orderBy('pertemuan_ke')->get()
+        ]);
+
+        return $pdf->download('rekap-presensi-'.$matkul->kode.'.pdf');
+    }
+
+    private function ensure16Pertemuan($matkul)
+    {
+        $existingPertemuan = $matkul->presences()->pluck('pertemuan_ke')->toArray();
+        
+        for ($i = 1; $i <= 16; $i++) {
+            if (!in_array($i, $existingPertemuan)) {
+                Presence::create([
+                    'matkul_id' => $matkul->id,
+                    'pertemuan_ke' => $i,
+                    'topik' => 'Pertemuan ' . $i,
+                    'tanggal' => now()->addWeeks($i-1),
+                    'is_active' => false,
+                    'barcode_token' => Str::random(32)
+                ]);
+            }
+        }
+    }
 
 
 }

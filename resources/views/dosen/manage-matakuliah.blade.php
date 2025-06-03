@@ -56,6 +56,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pertemuan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topik</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kehadiran</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -66,6 +67,9 @@
                         <td class="px-6 py-4 whitespace-nowrap">{{ $absensi->pertemuan_ke }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $absensi->topik }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $absensi->tanggal->format('Y-m-d') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $absensi->attendances_count }} / {{ $totalMahasiswa }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $absensi->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                 {{ $absensi->is_active ? 'Aktif' : 'Nonaktif' }}

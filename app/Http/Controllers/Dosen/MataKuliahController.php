@@ -29,14 +29,19 @@ class MataKuliahController extends Controller
             abort(403, 'Anda tidak memiliki akses ke mata kuliah ini.');
         }
 
-        $absensis = Presence::where('matkul_id', $matkul->id)
-            ->orderBy('pertemuan_ke', 'asc')
-            ->get();
+        $absensis = Presence::withCount('attendances')
+                    ->where('matkul_id', $matkul->id)
+                    ->orderBy('pertemuan_ke', 'asc')
+                    ->get();
 
         $mahasiswas = $matkul->mahasiswas()->with('user')->get();
+        $totalMahasiswa = $mahasiswas->count();
 
-        // Debugging: Tampilkan jumlah mahasiswa untuk memeriksa
-
-        return view('dosen.manage-matakuliah', compact('matkul', 'absensis', 'mahasiswas'));
+        return view('dosen.manage-matakuliah', [
+            'matkul' => $matkul,
+            'absensis' => $absensis,
+            'mahasiswas' => $mahasiswas,
+            'totalMahasiswa' => $totalMahasiswa
+        ]);
     }
 }

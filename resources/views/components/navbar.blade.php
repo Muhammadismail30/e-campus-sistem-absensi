@@ -10,7 +10,7 @@
                 <a href="{{ route(auth()->user()->role . '.dashboard') }}"
                     class="block px-4 py-2 rounded {{ request()->routeIs(auth()->user()->role . '.dashboard') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Dashboard</a>
                 <a href="{{ route(auth()->user()->role . '.matakuliah') }}"
-                    class="block px-4 py-2 rounded {{ request()->routeIs(auth()->user()->role . '.matakuliah') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Mata Kuliah</a>
+                    class="block px-4 py-2 rounded {{ request()->routeIs(auth()->user()->role . '.matakuliah') || request()->routeIs(auth()->user()->role . '.matakuliah.detail') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Mata Kuliah</a>
                 @if(auth()->user()->role === 'admin')
                     <a href="{{ route('admin.datapengguna') }}"
                         class="block px-4 py-2 rounded {{ request()->routeIs('admin.datapengguna') ? 'bg-white text-blue-700 font-semibold' : 'hover:bg-blue-600' }}">Data Pengguna</a>
@@ -54,7 +54,6 @@
                 <div x-show="dropdownOpen" @click.away="dropdownOpen = false" x-transition
                     class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 py-1 ring-1 ring-black ring-opacity-5">
                     <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"

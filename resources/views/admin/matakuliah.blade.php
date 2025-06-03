@@ -48,7 +48,7 @@
                 <select name="dosen_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
                     <option value="">-- Pilih Dosen --</option>
                     @foreach($dosens as $dosen)
-                        <option value="{{ $dosen->id }}">{{ $dosen->nama }} ({{ $dosen->nidn }})</option>
+                        <option value="{{ $dosen->id }}">{{ $dosen->user->name }} ({{ $dosen->nidn }})</option>
                     @endforeach
                 </select>
             </div>

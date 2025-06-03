@@ -17,10 +17,10 @@
                         <h3 class="text-xl font-bold mb-2">{{ $mk->nama }}</h3>
                         <div class="flex flex-wrap gap-2">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm">
-                                📋 Daftar Mahasiswa
+                                Daftar Mahasiswa
                             </span>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm">
-                                📊 Rekap Presensi
+                                Rekap Presensi
                             </span>
                         </div>
                     </div>

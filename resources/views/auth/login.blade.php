@@ -38,7 +38,7 @@
                             required
                             autofocus
                             autocomplete="username"
-                            placeholder="Masukkan NIM/NIDN Anda"
+                            placeholder="Masukkan Email Anda"
                         />
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>

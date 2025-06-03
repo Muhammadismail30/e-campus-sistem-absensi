@@ -22,7 +22,6 @@ class MataKuliahController extends Controller
             'dosens' => $dosens
         ]);
     }
-    
 
     public function store(Request $request)
     {
@@ -37,10 +36,10 @@ class MataKuliahController extends Controller
         return back()->with('success', 'Mata Kuliah berhasil ditambahkan');
     }
 
-    public function update(Request $request, Matakuliah $matkul)
+    public function update(Request $request, MataKuliah $matkul)
     {
         $request->validate([
-            'kode' => 'required|unique:mata_kuliah,kode,'.$matkul->id,
+            'kode' => 'required|unique:mata_kuliah,kode,' . $matkul->id,
             'nama' => 'required',
             'sks' => 'required|numeric',
             'dosen_id' => 'nullable|exists:dosens,id'
@@ -50,23 +49,22 @@ class MataKuliahController extends Controller
         return back()->with('success', 'Mata Kuliah berhasil diupdate');
     }
 
-    public function destroy(Matakuliah $matkul)
+    public function destroy(MataKuliah $matkul)
     {
         $matkul->delete();
         return back()->with('success', 'Mata Kuliah berhasil dihapus');
     }
 
-    // app/Http/Controllers/Admin/MataKuliahController.php
     public function show($id)
     {
         $matkul = MataKuliah::with(['dosen', 'presences.attendances'])
-                ->withCount('mahasiswas') // tambahkan ini
+                ->withCount('mahasiswas')
                 ->findOrFail($id);
-    
+
         return view('admin.matakuliah-detail', [
             'matkul' => $matkul,
             'presences' => $matkul->presences,
-            'mahasiswa_count' => $matkul->mahasiswas_count // tambahkan ini
+            'mahasiswa_count' => $matkul->mahasiswas_count
         ]);
     }
 }

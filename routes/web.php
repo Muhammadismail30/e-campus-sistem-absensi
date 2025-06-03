@@ -79,10 +79,10 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
     Route::get('/datapengguna', [DatapenggunaController::class, 'index'])->name('admin.datapengguna');
     Route::post('/datapengguna', [DatapenggunaController::class, 'store'])->name('admin.datapengguna.store');
     Route::delete('/datapengguna/{id}', [DatapenggunaController::class, 'destroy'])->name('admin.datapengguna.delete');
+    // Tambahkan alias untuk admin.matakuliah.detail
     Route::get('/matakuliah/{id}', [MataKuliahController::class, 'show'])->name('admin.matakuliah.detail');
     Route::get('/presensi', [PresensiController::class, 'index'])->name('admin.presensi');
-    Route::get('/absensi/{presence}', [AbsensiController::class, 'show'])
-         ->name('admin.absensi.detail');
+    Route::get('/absensi/{id}', [AbsensiController::class, 'show'])->name('admin.absensi.detail');
 });
 
 // Route khusus dosen

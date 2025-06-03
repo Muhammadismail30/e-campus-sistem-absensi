@@ -9,7 +9,7 @@
             <div class="mt-1 flex flex-wrap items-center gap-4">
                 <p class="text-sm text-gray-600">Kode: {{ $matkul->kode }}</p>
                 <p class="text-sm text-gray-600">{{ $matkul->sks }} SKS</p>
-                <p class="text-sm text-gray-600">Dosen: {{ $matkul->dosen->name ?? 'N/A' }}</p>
+                <p class="text-sm text-gray-600">Dosen: {{ $matkul->dosen->user->name ?? 'N/A' }}</p>
             </div>
         </div>
         <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
@@ -54,7 +54,7 @@
                             Pertemuan {{ $presence->pertemuan_ke }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $presence->tanggal->format('d M Y H:i') }}
+                            {{ $presence->tanggal->format('d M Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $presence->topik }}
