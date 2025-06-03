@@ -4,46 +4,84 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Rekap Presensi - {{ $matkul->nama_matkul }}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .page-break { page-break-after: always; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .title { font-size: 18px; font-weight: bold; }
-        .subtitle { font-size: 14px; color: #555; }
-        .legend { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
-        .legend-item { display: flex; align-items: center; }
-        .h-present { color: #16a34a; font-weight: bold; }
-        .a-absent { color: #dc2626; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            font-size: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .subtitle {
+            font-size: 12px;
+        }
+        .legend {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 11px;
+        }
+        .nama-mahasiswa {
+            text-align: left;
+            min-width: 100px;
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .hadir {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .alpa {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .page-break {
+            page-break-after: always;
+        }
     </style>
 </head>
 <body>
     <!-- Halaman 1 -->
     <div class="header">
         <div class="title">REKAP PRESENSI MATA KULIAH</div>
-        <div class="subtitle">{{ $matkul->nama_matkul }} ({{ $matkul->kode }}) - {{ $matkul->sks }} SKS</div>
+        <div class="subtitle">{{ $matkul->kode }} - {{ $matkul->sks }} SKS</div>
         <div class="subtitle">Dosen Pengampu: {{ $matkul->dosen->user->name }}</div>
     </div>
 
-    <!-- Legend -->
     <div class="legend">
-        <div class="legend-item">
-            <span class="h-present">H</span>&nbsp;= Hadir
-        </div>
-        <div class="legend-item">
-            <span class="a-absent">A</span>&nbsp;= Alpa
-        </div>
+        <span class="hadir">H = Hadir</span> | 
+        <span class="alpa">A = Alpa</span>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th>No</th>
-                <th>NIM</th>
+                <th style="width: 30px;">No</th>
+                <th style="width: 70px;">NIM</th>
                 <th>Nama Mahasiswa</th>
                 @for($i = 1; $i <= 16; $i++)
-                    <th>P{{ $i }}</th>
+                    <th style="width: 20px;">P{{ $i }}</th>
                 @endfor
             </tr>
         </thead>
@@ -52,16 +90,20 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $mahasiswa->nim }}</td>
-                <td>{{ $mahasiswa->user->name }}</td>
-                @foreach($presences as $presence)
+                <td class="nama-mahasiswa">{{ $mahasiswa->user->name }}</td>
+                @for($i = 1; $i <= 16; $i++)
+                    @php
+                        $presence = $presences->where('pertemuan_ke', $i)->first();
+                        $hadir = $presence ? $presence->attendances->where('mahasiswa_id', $mahasiswa->id)->count() > 0 : false;
+                    @endphp
                     <td>
-                        @if($presence->attendances->where('mahasiswa_id', $mahasiswa->id)->count() > 0)
-                            <span class="h-present">H</span>
+                        @if($hadir)
+                            <span class="hadir">H</span>
                         @else
-                            <span class="a-absent">A</span>
+                            <span class="alpa">A</span>
                         @endif
                     </td>
-                @endforeach
+                @endfor
             </tr>
             @endforeach
         </tbody>
@@ -72,29 +114,56 @@
     
     <div class="header">
         <div class="title">DETAIL PERTEMUAN</div>
-        <div class="subtitle">{{ $matkul->nama_matkul }} ({{ $matkul->kode }})</div>
+        <div class="subtitle">{{ $matkul->kode }} - {{ $matkul->nama_matkul }}</div>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th>Pertemuan</th>
-                <th>Tanggal</th>
+                <th style="width: 50px;">Pert.</th>
+                <th style="width: 80px;">Tanggal</th>
                 <th>Topik</th>
-                <th>Hadir</th>
-                <th>Tidak Hadir</th>
+                <th style="width: 50px;">Hadir</th>
+                <th style="width: 70px;">Tidak Hadir</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($presences as $presence)
-            <tr>
-                <td>{{ $presence->pertemuan_ke }}</td>
-                <td>{{ $presence->tanggal->format('d/m/Y') }}</td>
-                <td>{{ $presence->topik }}</td>
-                <td>{{ $presence->attendances->count() }}</td>
-                <td>{{ $matkul->mahasiswas->count() - $presence->attendances->count() }}</td>
-            </tr>
-            @endforeach
+            @for($i = 1; $i <= 16; $i++)
+                @php
+                    $presence = $presences->where('pertemuan_ke', $i)->first();
+                @endphp
+                <tr>
+                    <td>{{ $i }}</td>
+                    <td>
+                        @if($presence)
+                            {{ $presence->tanggal->format('d/m/Y') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        @if($presence)
+                            {{ $presence->topik }}
+                        @else
+                            Belum dilaksanakan
+                        @endif
+                    </td>
+                    <td>
+                        @if($presence)
+                            {{ $presence->attendances->count() }}
+                        @else
+                            0
+                        @endif
+                    </td>
+                    <td>
+                        @if($presence)
+                            {{ $matkul->mahasiswas->count() - $presence->attendances->count() }}
+                        @else
+                            {{ $matkul->mahasiswas->count() }}
+                        @endif
+                    </td>
+                </tr>
+            @endfor
         </tbody>
     </table>
 </body>
