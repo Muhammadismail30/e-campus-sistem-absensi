@@ -31,6 +31,7 @@ class MataKuliahController extends Controller
         // Ambil sesi absensi yang aktif untuk mata kuliah ini
         $activeAbsensi = Presence::where('matkul_id', $matkul->id)
             ->where('is_active', true)
+            ->orderBy('tanggal', 'desc')  // Urutkan berdasarkan tanggal, yang terbaru di atas
             ->first();
 
         // Ambil semua sesi absensi untuk mata kuliah ini
