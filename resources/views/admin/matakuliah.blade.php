@@ -39,7 +39,15 @@
             
             <div>
                 <label class="block text-sm font-medium text-gray-700">SKS</label>
-                <input type="number" name="sks" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                <input 
+                    type="number" 
+                    name="sks" 
+                    required 
+                    min="2" 
+                    max="6" 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                    oninput="validateSKS(this)"
+                >
             </div>
             
             <!-- Tambahkan dropdown dosen -->
