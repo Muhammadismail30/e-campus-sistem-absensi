@@ -100,7 +100,7 @@
             @foreach($matkuls as $matkul)
             <a href="{{ route('dosen.matakuliah.manage', $matkul->id) }}" class="border border-gray-200 p-3 rounded-lg hover:bg-gray-50">
                 <h3 class="font-medium text-gray-800">{{ $matkul->nama_matkul }}</h3>
-                <p class="text-sm text-gray-600">{{ $matkul->kelas }} - {{ $matkul->sks }} SKS</p>
+                <p class="text-sm text-gray-600">{{ $matkul->nama }} </p>
                 <div class="flex justify-between mt-2">
                     <span class="text-xs text-gray-500">{{ $matkul->presences_count }} pertemuan</span>
                     <span class="text-xs text-gray-500">{{ $matkul->mahasiswas_count }} mahasiswa</span>
