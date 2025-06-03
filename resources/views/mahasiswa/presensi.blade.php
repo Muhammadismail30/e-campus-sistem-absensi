@@ -26,7 +26,7 @@
                             @php
                                 $attendance = $item->attendances->first();
                             @endphp
-                            @if($attendance && $attendance->status === 'hadir')
+                            @if($attendance)
                                 <span class="text-green-600 font-semibold">Hadir</span>
                             @else
                                 <span class="text-red-600 font-semibold">Tidak Hadir</span>

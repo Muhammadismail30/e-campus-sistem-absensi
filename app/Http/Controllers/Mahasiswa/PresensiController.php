@@ -5,32 +5,41 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Presence;
+use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 
 class PresensiController extends Controller
 {
     public function index()
-{
-    $mahasiswaId = Auth::id();
+    {
+        $mahasiswa = Auth::user()->mahasiswa;
+        
+        // Ambil semua presensi yang diikuti mahasiswa dengan data lengkap
+        $presensi = Presence::with([
+            'mataKuliah',
+            'attendances' => function($query) use ($mahasiswa) {
+                $query->where('mahasiswa_id', $mahasiswa->id);
+            }
+        ])
+        ->whereHas('attendances', function($query) use ($mahasiswa) {
+            $query->where('mahasiswa_id', $mahasiswa->id);
+        })
+        ->orderByDesc('tanggal')
+        ->paginate(10); // Pagination untuk data yang banyak
 
-    // Ambil semua presensi yang diikuti mahasiswa
-    $presensi = Presence::with(['mataKuliah', 'attendances' => function ($query) use ($mahasiswaId) {
-        $query->where('mahasiswa_id', $mahasiswaId);
-    }])
-    ->whereHas('attendances', function ($query) use ($mahasiswaId) {
-        $query->where('mahasiswa_id', $mahasiswaId);
-    })
-    ->orderByDesc('tanggal')
-    ->get();
+        // Hitung statistik kehadiran
+        $totalHadir = Attendance::where('mahasiswa_id', $mahasiswa->id)
+                        ->where('status', 'hadir')
+                        ->count();
+                        
+        $totalSesi = $presensi->total();
 
-    // Ambil absensi aktif terbaru
-    $activeAbsensi = Presence::where('is_active', true)->latest()->first();
-
-    return view('mahasiswa.presensi', [
-        'title' => 'Riwayat Presensi Mahasiswa',
-        'presensi' => $presensi,
-        'activeAbsensi' => $activeAbsensi, // ← INI YANG PENTING
-    ]);
-}
-
+        return view('mahasiswa.presensi', [
+            'title' => 'Riwayat Presensi',
+            'presensi' => $presensi,
+            'totalHadir' => $totalHadir,
+            'totalSesi' => $totalSesi,
+            'persentaseKehadiran' => $totalSesi > 0 ? round(($totalHadir/$totalSesi)*100, 2) : 0
+        ]);
+    }
 }

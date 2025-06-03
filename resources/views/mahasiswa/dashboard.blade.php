@@ -19,6 +19,8 @@
             <div>
                 <p class="text-sm text-gray-500">Mata Kuliah Diambil</p>
                 <p class="text-2xl font-bold">{{ $totalMatkul }}</p>
+                {{-- menampilkan daftar matakuliah yang diambil, jika lebih dari 2 maka lainnya --}}
+                <p class="text-xs text-gray-500 mt-1">{{ $mahasiswa->mataKuliahs->take(2)->implode('nama_matkul') }}</p>
             </div>
         </div>
     </div>
@@ -72,7 +74,7 @@
         @foreach($matkulWithPresence as $item)
         <a href="{{ route('mahasiswa.matakuliah.enter', $item['matkul']->id) }}" 
            class="border border-gray-200 p-3 rounded-lg hover:bg-gray-50">
-            <h3 class="font-medium text-gray-800">{{ $item['matkul']->nama_matkul }}</h3>
+            <h3 class="font-medium text-gray-800">{{ $item['matkul']->nama }}</h3>
             <p class="text-sm text-gray-600">{{ $item['matkul']->kode }} - {{ $item['matkul']->sks }} SKS</p>
             
             <div class="mt-2">
@@ -106,7 +108,7 @@
         <div class="border border-gray-200 p-3 rounded-lg hover:bg-gray-50">
             <div class="flex justify-between items-center">
                 <div>
-                    <h3 class="font-medium text-gray-800">{{ $schedule->mataKuliah->nama_matkul }}</h3>
+                    <h3 class="font-medium text-gray-800">{{ $schedule->mataKuliah->nama }}</h3>
                     <p class="text-sm text-gray-600">Pertemuan {{ $schedule->pertemuan_ke }}: {{ $schedule->topik }}</p>
                     <p class="text-xs text-gray-500 mt-1">{{ $schedule->tanggal->format('H:i') }}</p>
                 </div>
