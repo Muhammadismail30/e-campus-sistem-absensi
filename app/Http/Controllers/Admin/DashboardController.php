@@ -18,7 +18,10 @@ class DashboardController extends Controller
             'active' => 'dashboard',
             'total_mahasiswa' => Mahasiswa::count(),
             'total_dosen' => Dosen::count(),
-            'total_matkul' => MataKuliah::count()
+            'total_matkul' => MataKuliah::count(),
+            'matkuls' => MataKuliah::with('dosen.user')->get(),
         ]);
+
+        
     }
 }
