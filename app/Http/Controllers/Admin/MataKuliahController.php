@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\MataKuliah;
 use App\Models\Dosen;
 use App\Models\Presence;
+use Illuminate\Database\QueryException;
 
 class MataKuliahController extends Controller
 {
@@ -50,10 +51,20 @@ class MataKuliahController extends Controller
     }
 
     public function destroy(MataKuliah $matkul)
-    {
+{
+    try {
         $matkul->delete();
         return back()->with('success', 'Mata Kuliah berhasil dihapus');
+    } catch (QueryException $e) {
+        // Cek jika error karena foreign key constraint
+        if ($e->getCode() == '23000') {
+            return back()->with('error', 'Anda tidak bisa menghapus kelas yang sudah terisi absensi');
+        }
+
+        // Untuk error lain, kembalikan pesan default
+        return back()->with('error', 'Terjadi kesalahan saat menghapus Mata Kuliah');
     }
+}
 
     public function show($id)
     {
