@@ -18,9 +18,8 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Mata Kuliah Diambil</p>
-                <p class="text-2xl font-bold">{{ $totalMatkul }}</p>
-                {{-- menampilkan daftar matakuliah yang diambil, jika lebih dari 2 maka lainnya --}}
-                <p class="text-xs text-gray-500 mt-1">{{ $mahasiswa->mataKuliahs->take(2)->implode('nama_matkul') }}</p>
+                <p class="text-2xl font-bold">{{ $totalMatkul }} Mata Kuliah</p>
+                <p class="text-sm text-gray-500"></p>
             </div>
         </div>
     </div>
