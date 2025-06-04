@@ -109,7 +109,7 @@
                 <div>
                     <h3 class="font-medium text-gray-800">{{ $schedule->mataKuliah->nama }}</h3>
                     <p class="text-sm text-gray-600">Pertemuan {{ $schedule->pertemuan_ke }}: {{ $schedule->topik }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $schedule->tanggal->format('H:i') }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ $schedule->tanggal->format('Y-m-d (D)') }}</p>
                 </div>
                 @if($schedule->is_active)
                 <a href="{{ route('mahasiswa.absensi.scan', $schedule->barcode_token) }}" 

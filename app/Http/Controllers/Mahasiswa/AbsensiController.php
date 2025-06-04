@@ -84,7 +84,7 @@ class AbsensiController extends Controller
                     'waktu' => now()->format('d-m-Y H:i:s'),
                     'matkul' => $presence->mataKuliah->nama,
                     'pertemuan' => $presence->pertemuan_ke,
-                    'status' => 'Hadir'
+                    'status' => 'hadir'
                 ]
             ]);
 

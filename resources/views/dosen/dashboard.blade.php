@@ -68,7 +68,7 @@
                         <div>
                             <h3 class="font-medium text-gray-800">{{ $presensi->mataKuliah->nama_matkul }}</h3>
                             <p class="text-sm text-gray-600">Pertemuan {{ $presensi->pertemuan_ke }} - {{ $presensi->topik }}</p>
-                            <p class="text-xs text-gray-500 mt-1">{{ $presensi->tanggal->format('H:i') }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ $presensi->tanggal->format('Y-m-d (D)') }}</p>
                         </div>
                         <div>
                             @if($presensi->is_active)
