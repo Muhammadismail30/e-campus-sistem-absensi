@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-3xl">
-    <!-- Tambahkan tombol kembali di sini -->
+    <!-- Button kembali -->
     <div class="flex items-center mb-4">
         <a href="{{ route('dosen.matakuliah.manage', $absensi->mataKuliah->id) }}" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
