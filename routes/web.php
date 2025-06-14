@@ -103,6 +103,7 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->group(fu
         Route::post('/{absensi}/toggle', [DosenAbsensiController::class, 'toggleAbsensi'])->name('dosen.absensi.toggle');
         Route::put('/{id}', [DosenAbsensiController::class, 'update'])->name('dosen.absensi.update'); // Ubah path menjadi /{id}
         Route::get('/{absensi}/barcode', [DosenAbsensiController::class, 'showBarcode'])->name('dosen.absensi.barcode');
+        Route::post('/absensi/{id}/regenerate-token', [DosenAbsensiController::class, 'regenerateToken'])->name('dosen.absensi.regenerate-token');
     });
 });
 
